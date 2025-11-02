@@ -1,5 +1,6 @@
 // src/server.js
 import express from 'express';
+import cors from 'cors';
 import 'dotenv/config';
 
 
@@ -7,6 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware для парсингу JSON
+app.use(cors());
 app.use(express.json());
 
 // GET-запит до списку нотаток "/notes"
