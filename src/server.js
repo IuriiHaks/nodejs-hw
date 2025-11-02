@@ -1,6 +1,7 @@
 // src/server.js
 import express from 'express';
 import cors from 'cors';
+import pino from 'pino-http';
 import 'dotenv/config';
 
 
@@ -10,6 +11,11 @@ const PORT = process.env.PORT || 3000;
 // Middleware для парсингу JSON
 app.use(cors());
 app.use(express.json());
+app.use(pino());
+
+app.get('/test-error', () => {
+  throw new Error('Simulated server error');
+});
 
 // GET-запит до списку нотаток "/notes"
 app.get('/notes', (req, res) => {
@@ -27,6 +33,10 @@ app.get('/notes/:noteId', (req, res) => {
 // Обробка невизначених маршрутів
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
+});
+
+app.use((err, req, res, next) => {
+  res.status(500).json({ message: err.message });
 });
 
 // Запуск сервера
