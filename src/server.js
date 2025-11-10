@@ -1,43 +1,37 @@
 // src/server.js
 import express from 'express';
 import cors from 'cors';
-import pino from 'pino-http';
 import 'dotenv/config';
+import { connectMongoDB } from './db/connectMongoDB.js';
+import notesRoutes from './routes/notesRoutes.js';
+import { notFoundHandler } from './middleware/notFoundHandler.js';
+import { errorHandler } from './middleware/errorHandler.js';
+import { logger } from './middleware/logger.js';
 
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ?? 3000;
 
 // Middleware для парсингу JSON
-app.use(cors());
+app.use(logger);
 app.use(express.json());
-app.use(pino());
+app.use(cors());
 
-app.get('/test-error', () => {
-  throw new Error('Simulated server error');
-});
 
-// GET-запит до списку нотаток "/notes"
-app.get('/notes', (req, res) => {
-  res.status(200).json({
-    message: "Retrieved all notes", // Тимчасове повідомлення
-  });
-});
+// app.get('/test-error', () => {
+//   throw new Error('Simulated server error');
+// });
 
-// GET-запит до нотатки за ідентифікатором "/notes/:noteId"
-app.get('/notes/:noteId', (req, res) => {
-  const { noteId } = req.params;
-  res.status(200).json({ message: `Retrieved note with ID: ${noteId}` });
-});
+// Routes
+app.use(notesRoutes);
 
 // Обробка невизначених маршрутів
-app.use((req, res) => {
-  res.status(404).json({ message: "Route not found" });
-});
+app.use(notFoundHandler);
 
-app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message });
-});
+app.use(errorHandler);
+
+// підключення до MongoDB
+await connectMongoDB();
 
 // Запуск сервера
 app.listen(PORT, () => {
