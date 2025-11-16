@@ -8,13 +8,25 @@ const noteSchema = new Schema(
     content: { type: String, trim: true, default: '' },
     tag: {
       type: String,
-      enum: ['Work', 'Personal', 'Meeting', 'Shopping', 'Ideas', 'Travel', 'Finance', 'Health', 'Important', 'Todo'],
+      enum: [
+        'Work',
+        'Personal',
+        'Meeting',
+        'Shopping',
+        'Ideas',
+        'Travel',
+        'Finance',
+        'Health',
+        'Important',
+        'Todo',
+      ],
       default: 'Todo',
       trim: true,
     },
   },
-  { timestamps: true,
-  versionKey: false, }
+  { timestamps: true, versionKey: false },
 );
+
+noteSchema.index({ title: 'text', content: 'text' });
 
 export const Note = model('Note', noteSchema);
