@@ -8,9 +8,9 @@ import {
   updateNote,
 } from '../controllers/notesController.js';
 import {
-  createNoteShema,
-  updateNoteShema,
-  noteIdShema,
+  createNoteSchema,
+  updateNoteSchema,
+  noteIdSchema,
   getAllNotesSchema,
 } from '../validations/notesValidation.js';
 
@@ -20,13 +20,13 @@ const router = Router();
 router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
 
 // GET-запит до нотатки за ідентифікатором "/notes/:noteId"
-router.get('/notes/:noteId', celebrate(noteIdShema), getNoteById);
+router.get('/notes/:noteId', celebrate(noteIdSchema), getNoteById);
 
 // POST-запит для створення нової нотатки "/notes"
-router.post('/notes', celebrate(createNoteShema), createNote);
+router.post('/notes', celebrate(createNoteSchema), createNote);
 
-router.delete('/notes/:noteId', celebrate(noteIdShema), deleteNote);
+router.delete('/notes/:noteId', celebrate(noteIdSchema), deleteNote);
 
-router.patch('/notes/:noteId', celebrate(updateNoteShema), updateNote);
+router.patch('/notes/:noteId', celebrate(updateNoteSchema), updateNote);
 
 export default router;

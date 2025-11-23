@@ -16,33 +16,35 @@ export const getAllNotesSchema = {
     tag: Joi.string()
       .valid(...TAGS)
       .optional(),
-    search: Joi.string().trim().allow(''),
+    search: Joi.string().trim().allow('').optional(),
   }),
 };
 
-export const createNoteShema = {
+export const createNoteSchema = {
   [Segments.BODY]: Joi.object({
     title: Joi.string().min(1).required(),
-    content: Joi.string().min(3).max(100).required(),
+    content: Joi.string().allow('').optional(),
     tag: Joi.string()
       .valid(...TAGS)
-      .required(),
+      .optional(),
   }),
 };
 
-export const noteIdShema = {
+export const noteIdSchema = {
   [Segments.PARAMS]: Joi.object({
-    noteId: Joi.custom(objectIdValidator).required(),
+    noteId: Joi.string().custom(objectIdValidator).required(),
   }),
 };
 
-export const updateNoteShema = {
+export const updateNoteSchema = {
   [Segments.PARAMS]: Joi.object({
-    noteId: Joi.custom(objectIdValidator).required(),
+    noteId: Joi.string().custom(objectIdValidator).required(),
   }),
   [Segments.BODY]: Joi.object({
-    title: Joi.string().min(1),
-    content: Joi.string().min(3).max(100),
-    tag: Joi.string().valid(...TAGS),
-  }).or('title', 'content', 'tag'),
+    title: Joi.string().min(1).optional(),
+    content: Joi.string().allow('').optional(),
+    tag: Joi.string()
+      .valid(...TAGS)
+      .optional(),
+  }).min(1),
 };
