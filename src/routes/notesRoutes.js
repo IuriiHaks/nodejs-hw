@@ -13,8 +13,11 @@ import {
   noteIdSchema,
   getAllNotesSchema,
 } from '../validations/notesValidation.js';
+import { authenticate } from '../middleware/authenticate.js';
 
 const router = Router();
+
+router.use('/notes', authenticate);
 
 // GET-запит до списку нотаток "/notes"
 router.get('/notes', celebrate(getAllNotesSchema), getAllNotes);
