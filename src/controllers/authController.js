@@ -5,6 +5,9 @@ import { User } from '../models/user.js';
 import { Session } from '../models/session.js';
 import { createSession, setSessionCookies } from '../services/auth.js';
 import { sendEmail } from '../utils/sendMail.js';
+import handlebars from 'handlebars';
+import path from 'node:path';
+import fs from 'node:fs/promises';
 
 // Реєстрація користувача
 export const registerUser = async (req, res) => {
@@ -107,12 +110,25 @@ export const requestResetEmail = async (req, res) => {
 
   // console.log('Reset Token:', token);
 
+  // 1. Формуємо шлях до шаблона
+  const templatePath = path.resolve('src/templates/reset-password-email.html');
+  // 2. Читаємо шаблон
+  const templateSource = await fs.readFile(templatePath, 'utf-8');
+  // 3. Готуємо шаблон до заповнення
+  const template = handlebars.compile(templateSource);
+  // 4. Формуємо із шаблона HTML документ з динамічними даними
+  const html = template({
+    name: user.username,
+    link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${token}`,
+  });
+
   try {
     await sendEmail({
       from: process.env.SMTP_FROM,
       to: email,
       subject: 'Reset your password',
-      html: `<p>Click <a href="${process.env.FRONTEND_DOMAIN}?token=${token}">here</a> to reset your password!</p>`,
+      // html: `<p>Click <a href="${process.env.FRONTEND_DOMAIN}?token=${token}">here</a> to reset your password!</p>`,
+      html,
     });
   } catch {
     throw createHttpError(
